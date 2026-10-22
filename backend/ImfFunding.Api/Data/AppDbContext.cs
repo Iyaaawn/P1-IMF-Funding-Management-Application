@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<LendingFacility> LendingFacilities { get; set; }
     public DbSet<FundingRequest> FundingRequests { get; set; }
 
+    public DbSet<User> Users {get;set;}
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

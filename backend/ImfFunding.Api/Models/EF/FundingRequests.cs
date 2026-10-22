@@ -32,11 +32,10 @@ public class FundingRequest
     public DateTime SubmittedDate{get;set;}
     public DateTime LastUpdated{get;set;}
 
-
-
     public Country Country{get;set;} = null!;
     public LendingFacility LendingFacility{get;set;} = null!;
 
-    // public virtual User? RequestedById{get;set;}
+    public User? RequestedBy { get; set; }
+
 
 }

@@ -130,6 +130,46 @@ namespace ImfFunding.Api.Migrations
                     b.ToTable("LendingFacilities");
                 });
 
+            modelBuilder.Entity("ImfFunding.Api.Models.EF.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("ImfFunding.Api.Models.EF.FundingRequest", b =>
                 {
                     b.HasOne("ImfFunding.Api.Models.EF.Country", "Country")
@@ -147,6 +187,15 @@ namespace ImfFunding.Api.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("LendingFacility");
+                });
+
+            modelBuilder.Entity("ImfFunding.Api.Models.EF.User", b =>
+                {
+                    b.HasOne("ImfFunding.Api.Models.EF.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId");
+
+                    b.Navigation("Country");
                 });
 #pragma warning restore 612, 618
         }
