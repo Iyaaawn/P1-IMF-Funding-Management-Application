@@ -16,15 +16,16 @@ public class FundingRequestsController : ControllerBase
         _service = service;
     }
 
-    // GET api/fundingrequests?countryId=1&status=Submitted   (both filters optional)
+#region GET api/fundingrequests?countryId=1&status=Submitted   (both filters optional)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FundingRequestDto>>> GetAll(
         [FromQuery] int? countryId, [FromQuery] Status? status)
     {
         return Ok(await _service.GetAllAsync(countryId, status));
     }
+#endregion
 
-    // GET api/fundingrequests/5
+#region GET api/fundingrequests/5
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FundingRequestDto>> GetById(int id)
     {
@@ -32,8 +33,9 @@ public class FundingRequestsController : ControllerBase
         if (request == null) return NotFound();
         return request;
     }
+#endregion
 
-    // POST api/fundingrequests
+#region POST api/fundingrequests
     [HttpPost]
     public async Task<ActionResult<FundingRequestDto>> Create(CreateFundingRequestDto dto)
     {
@@ -41,8 +43,9 @@ public class FundingRequestsController : ControllerBase
         if (!result.Succeeded) return ToErrorResponse(result);
         return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);   // 201 + Location header
     }
+#endregion
 
-    // PUT api/fundingrequests/5
+#region PUT api/fundingrequests/5
     [HttpPut("{id:int}")]
     public async Task<ActionResult<FundingRequestDto>> Update(int id, UpdateFundingRequestDto dto)
     {
@@ -50,8 +53,9 @@ public class FundingRequestsController : ControllerBase
         if (!result.Succeeded) return ToErrorResponse(result);
         return Ok(result.Value);
     }
+#endregion
 
-    // PATCH api/fundingrequests/5/status   body: { "status": "StaffAssessment" }
+#region PATCH api/fundingrequests/5/status   body: { "status": "StaffAssessment" }
     [HttpPatch("{id:int}/status")]
     public async Task<ActionResult<FundingRequestDto>> ChangeStatus(int id, UpdateStatusDto dto)
     {
@@ -59,8 +63,9 @@ public class FundingRequestsController : ControllerBase
         if (!result.Succeeded) return ToErrorResponse(result);
         return Ok(result.Value);
     }
+#endregion
 
-    // DELETE api/fundingrequests/5
+#region DELETE api/fundingrequests/5
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -68,6 +73,7 @@ public class FundingRequestsController : ControllerBase
         if (!result.Succeeded) return ToErrorResponse(result);
         return NoContent();
     }
+#endregion
 
     // Turns a service failure into the right HTTP status code
     private ActionResult ToErrorResponse<T>(ServiceResult<T> result) => result.Error switch
