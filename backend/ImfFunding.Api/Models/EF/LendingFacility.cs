@@ -1,9 +1,11 @@
 
 
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace ImfFunding.Api.Models.EF;
 
+[Index(nameof(CodeName), IsUnique = true)]
 public class LendingFacility
 {
     public int Id{get;set;}
