@@ -59,10 +59,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddAuthorization();
 
 //CORS/React stuff
+var allowedOrigins = builder.Configuration["AllowedOrigins"]?
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    ?? new[] { "http://localhost:5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy => policy
-        .WithOrigins("http://localhost:5173")
+        .WithOrigins(allowedOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
@@ -71,13 +75,10 @@ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
 
 
 //middleware pipeline
