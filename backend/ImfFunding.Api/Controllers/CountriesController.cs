@@ -4,6 +4,7 @@ using ImfFunding.Api.Data;
 using ImfFunding.Api.Models.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; //
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImfFunding.Api.Controllers;
 
@@ -59,6 +60,7 @@ public class CountriesController : ControllerBase
 
     // POST 
     [HttpPost]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Country>> PostCountry(Country country)
     {
         // 1) Check first: reject duplicates before touching the database

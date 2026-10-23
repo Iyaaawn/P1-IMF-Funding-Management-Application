@@ -1,12 +1,14 @@
 using ImfFunding.Api.Models.DTOs;
 using ImfFunding.Api.Models.EF;
 using ImfFunding.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ImfFunding.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class FundingRequestsController : ControllerBase
 {
     private readonly IFundingRequestService _service;
@@ -39,10 +41,11 @@ public class FundingRequestsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FundingRequestDto>> Create(CreateFundingRequestDto dto)
     {
-        var result = await _service.CreateAsync(dto);
+        var userId = int.Parse(User.FindFirst("sub")!.Value);
+        var result = await _service.CreateAsync(dto, userId);
         if (!result.Succeeded) return ToErrorResponse(result);
-        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);   // 201 + Location header
-    }
+        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);
+}
 #endregion
 
 #region PUT api/fundingrequests/5
@@ -57,6 +60,7 @@ public class FundingRequestsController : ControllerBase
 
 #region PATCH api/fundingrequests/5/status   body: { "status": "StaffAssessment" }
     [HttpPatch("{id:int}/status")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<FundingRequestDto>> ChangeStatus(int id, UpdateStatusDto dto)
     {
         var result = await _service.ChangeStatusAsync(id, dto);

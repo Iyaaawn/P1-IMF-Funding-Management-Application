@@ -53,7 +53,7 @@ public class FundingRequestService : IFundingRequestService
         return request == null ? null : ToDto(request);
     }
 
-    public async Task<ServiceResult<FundingRequestDto>> CreateAsync(CreateFundingRequestDto dto)
+    public async Task<ServiceResult<FundingRequestDto>> CreateAsync(CreateFundingRequestDto dto, int requestedById)
     {
         var country = await _context.Countries.FindAsync(dto.CountryId);
         if (country == null)
@@ -78,7 +78,8 @@ public class FundingRequestService : IFundingRequestService
             RequestAmountSdrMillions = dto.RequestAmountSdrMillions,
             Status = Status.Submitted,          // always starts here; the client can't choose
             SubmittedDate = DateTime.UtcNow,    // set by the server, not the client
-            LastUpdated = DateTime.UtcNow
+            LastUpdated = DateTime.UtcNow,
+            RequestedById = requestedById
         };
 
         _context.FundingRequests.Add(request);
