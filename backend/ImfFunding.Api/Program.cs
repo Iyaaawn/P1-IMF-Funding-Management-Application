@@ -37,6 +37,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IFundingRequestService, FundingRequestService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+//JWT Stuff
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
     {
         options.MapInboundClaims = false;     // keep claim names exactly as we wrote them ("role", "name", "sub")
@@ -55,10 +56,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             ClockSkew = TimeSpan.FromMinutes(1)
         };
     });
-
-
-
 builder.Services.AddAuthorization();
+
+//CORS/React stuff
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy => policy
+        .WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -76,6 +83,10 @@ if (app.Environment.IsDevelopment())
 //middleware pipeline
 app.UseHttpsRedirection();
 app.UseHttpsRedirection();
+app.UseCors("Frontend");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+//Run the app
 app.Run();

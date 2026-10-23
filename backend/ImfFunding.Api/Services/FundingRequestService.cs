@@ -30,12 +30,15 @@ public class FundingRequestService : IFundingRequestService
         _context = context;
     }
 
-    public async Task<IEnumerable<FundingRequestDto>> GetAllAsync(int? countryId, Status? status)
+    public async Task<IEnumerable<FundingRequestDto>> GetAllAsync(int? countryId, Status? status, int userId, bool isAdmin)
     {
         IQueryable<FundingRequest> query = _context.FundingRequests
             .AsNoTracking()
             .Include(r => r.Country)
             .Include(r => r.LendingFacility);
+
+        if (!isAdmin)
+        query = query.Where(r => r.RequestedById == userId);   // requesters only see their own
 
         // Optional filters: each Where becomes part of the SQL WHERE clause
         if (countryId.HasValue)
@@ -47,10 +50,12 @@ public class FundingRequestService : IFundingRequestService
         return requests.Select(ToDto);
     }
 
-    public async Task<FundingRequestDto?> GetByIdAsync(int id)
+    public async Task<FundingRequestDto?> GetByIdAsync(int id, int userId, bool isAdmin)
     {
         var request = await FindWithDetailsAsync(id);
-        return request == null ? null : ToDto(request);
+        if (request == null || (!isAdmin && request.RequestedById != userId))
+            return null;
+        return ToDto(request);
     }
 
     public async Task<ServiceResult<FundingRequestDto>> CreateAsync(CreateFundingRequestDto dto, int requestedById)
@@ -87,11 +92,15 @@ public class FundingRequestService : IFundingRequestService
         return ServiceResult<FundingRequestDto>.Ok(ToDto(request));
     }
 
-    public async Task<ServiceResult<FundingRequestDto>> UpdateAsync(int id, UpdateFundingRequestDto dto)
+    public async Task<ServiceResult<FundingRequestDto>> UpdateAsync(int id, UpdateFundingRequestDto dto, int userId, bool isAdmin)
     {
         var request = await FindWithDetailsAsync(id);
         if (request == null)
             return ServiceResult<FundingRequestDto>.NotFound($"Funding request {id} not found.");
+
+        if (!isAdmin && request.RequestedById != userId)
+            return ServiceResult<FundingRequestDto>.NotFound($"Funding request {id} not found.");
+
 
         if (request.Status != Status.Submitted)
             return ServiceResult<FundingRequestDto>.Conflict(
@@ -139,10 +148,13 @@ public class FundingRequestService : IFundingRequestService
         return ServiceResult<FundingRequestDto>.Ok(ToDto(request));
     }
 
-    public async Task<ServiceResult<bool>> DeleteAsync(int id)
+    public async Task<ServiceResult<bool>> DeleteAsync(int id, int userId, bool isAdmin)
     {
         var request = await _context.FundingRequests.FindAsync(id);
-        if (request == null)
+
+
+
+        if (request == null || (!isAdmin && request.RequestedById != userId))
             return ServiceResult<bool>.NotFound($"Funding request {id} not found.");
 
         if (request.Status != Status.Submitted && request.Status != Status.Rejected)

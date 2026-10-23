@@ -18,12 +18,15 @@ public class FundingRequestsController : ControllerBase
         _service = service;
     }
 
+    private int CurrentUserId => int.Parse(User.FindFirst("sub")!.Value);
+    private bool IsAdmin => User.IsInRole(Roles.Admin);
+
 #region GET api/fundingrequests?countryId=1&status=Submitted   (both filters optional)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FundingRequestDto>>> GetAll(
         [FromQuery] int? countryId, [FromQuery] Status? status)
     {
-        return Ok(await _service.GetAllAsync(countryId, status));
+        return Ok(await _service.GetAllAsync(countryId, status, CurrentUserId, IsAdmin));
     }
 #endregion
 
@@ -31,7 +34,7 @@ public class FundingRequestsController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FundingRequestDto>> GetById(int id)
     {
-        var request = await _service.GetByIdAsync(id);
+        var request = await _service.GetByIdAsync(id, CurrentUserId, IsAdmin);
         if (request == null) return NotFound();
         return request;
     }
@@ -52,7 +55,7 @@ public class FundingRequestsController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<ActionResult<FundingRequestDto>> Update(int id, UpdateFundingRequestDto dto)
     {
-        var result = await _service.UpdateAsync(id, dto);
+        var result = await _service.UpdateAsync(id, dto, CurrentUserId, IsAdmin);
         if (!result.Succeeded) return ToErrorResponse(result);
         return Ok(result.Value);
     }
@@ -73,8 +76,7 @@ public class FundingRequestsController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _service.DeleteAsync(id);
-        if (!result.Succeeded) return ToErrorResponse(result);
+        var result = await _service.DeleteAsync(id, CurrentUserId, IsAdmin);        if (!result.Succeeded) return ToErrorResponse(result);
         return NoContent();
     }
 #endregion

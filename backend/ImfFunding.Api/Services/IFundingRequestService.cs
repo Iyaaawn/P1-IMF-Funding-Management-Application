@@ -9,10 +9,10 @@ namespace ImfFunding.Api.Services;
 
 public interface IFundingRequestService
 {
-    Task<IEnumerable<FundingRequestDto>> GetAllAsync(int? countryId, Status? status);
-    Task<FundingRequestDto?> GetByIdAsync(int id);
-    Task<ServiceResult<FundingRequestDto>> CreateAsync(CreateFundingRequestDto dto, int requestedById);
-    Task<ServiceResult<FundingRequestDto>> UpdateAsync(int id, UpdateFundingRequestDto dto);
+    Task<IEnumerable<FundingRequestDto>> GetAllAsync(int? countryId, Status? status, int userId, bool isAdmin);
+    Task<FundingRequestDto?> GetByIdAsync(int id, int userId, bool isAdmin);
+    Task<ServiceResult<FundingRequestDto>> UpdateAsync(int id, UpdateFundingRequestDto dto, int userId, bool isAdmin);
+    Task<ServiceResult<bool>> DeleteAsync(int id, int userId, bool isAdmin);
     Task<ServiceResult<FundingRequestDto>> ChangeStatusAsync(int id, UpdateStatusDto dto);
-    Task<ServiceResult<bool>> DeleteAsync(int id);
+    Task<ServiceResult<FundingRequestDto>> CreateAsync(CreateFundingRequestDto dto, int requestedById);
 }
