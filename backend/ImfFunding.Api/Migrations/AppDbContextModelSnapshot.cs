@@ -32,8 +32,8 @@ namespace ImfFunding.Api.Migrations
 
                     b.Property<string>("IsoCode")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -46,7 +46,54 @@ namespace ImfFunding.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IsoCode")
+                        .IsUnique();
+
                     b.ToTable("Countries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsoCode = "GHA",
+                            Name = "Ghana",
+                            QuotaAmountSdrMillions = 738.0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsoCode = "KEN",
+                            Name = "Kenya",
+                            QuotaAmountSdrMillions = 542.8m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsoCode = "ARG",
+                            Name = "Argentina",
+                            QuotaAmountSdrMillions = 3187.3m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsoCode = "EGY",
+                            Name = "Egypt",
+                            QuotaAmountSdrMillions = 2037.1m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsoCode = "PAK",
+                            Name = "Pakistan",
+                            QuotaAmountSdrMillions = 2031.0m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsoCode = "LKA",
+                            Name = "Sri Lanka",
+                            QuotaAmountSdrMillions = 578.8m
+                        });
                 });
 
             modelBuilder.Entity("ImfFunding.Api.Models.EF.FundingRequest", b =>
@@ -127,7 +174,52 @@ namespace ImfFunding.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CodeName")
+                        .IsUnique();
+
                     b.ToTable("LendingFacilities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CodeName = "SBA",
+                            Description = "Short-term support for countries with balance-of-payments problems.",
+                            FullName = "Stand-By Arrangement",
+                            MaxTermMonths = 36
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CodeName = "EFF",
+                            Description = "Longer-term support for countries with deep structural problems.",
+                            FullName = "Extended Fund Facility",
+                            MaxTermMonths = 48
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CodeName = "ECF",
+                            Description = "Concessional (low-interest) support for low-income countries.",
+                            FullName = "Extended Credit Facility",
+                            MaxTermMonths = 60
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CodeName = "FCL",
+                            Description = "Precautionary credit line for countries with very strong policies.",
+                            FullName = "Flexible Credit Line",
+                            MaxTermMonths = 24
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CodeName = "RSF",
+                            Description = "Long-term financing for climate and pandemic resilience.",
+                            FullName = "Resilience and Sustainability Facility",
+                            MaxTermMonths = 36
+                        });
                 });
 
             modelBuilder.Entity("ImfFunding.Api.Models.EF.FundingRequest", b =>
