@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ImfFunding.Api.Models.EF;
 
+[Index(nameof(IsoCode), IsUnique = true)]
 public class Country
 {
     
@@ -13,7 +14,7 @@ public class Country
     public string Name {get; set;} = null!;
 
     [Required]
-    [StringLength(2)]
+    [StringLength(3)]
     public string IsoCode {get; set;} = null!;
 
     [Precision(18,2)]
