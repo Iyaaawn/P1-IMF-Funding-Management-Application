@@ -143,6 +143,8 @@ namespace ImfFunding.Api.Migrations
 
                     b.HasIndex("LendingFacilityId");
 
+                    b.HasIndex("RequestedById");
+
                     b.ToTable("FundingRequests");
                 });
 
@@ -276,9 +278,15 @@ namespace ImfFunding.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ImfFunding.Api.Models.EF.User", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById");
+
                     b.Navigation("Country");
 
                     b.Navigation("LendingFacility");
+
+                    b.Navigation("RequestedBy");
                 });
 
             modelBuilder.Entity("ImfFunding.Api.Models.EF.User", b =>
